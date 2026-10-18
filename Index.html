@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DX WIN - PRO PANEL</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif;user-select:none;letter-spacing:0.5px}
+  body{overflow:hidden;background:#000}
+  iframe{position:fixed;width:100%;height:100%;border:none;background:#000;z-index:1}
+
+  /* Floating Toggle Button */
+  #floatingToggle{
+    position:fixed;top:15px;right:15px;width:40px;height:40px;border-radius:50%;
+    background:linear-gradient(135deg,#d4af37,#aa8c2c);
+    border:1.5px solid #fff;cursor:pointer;z-index:10000;touch-action:none;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 0 10px rgba(212,175,55,0.8);
+  }
+  #floatingToggle span{font-size:10px;font-weight:900;color:#121212}
+
+  /* Main Panel */
+  #panel{
+    position:fixed;right:15px;bottom:15px;width:160px;padding:6px;
+    background:rgba(18, 18, 18, 0.95);backdrop-filter:blur(10px);
+    border-radius:12px;border:1.5px solid #d4af37;
+    box-shadow:0 10px 25px rgba(0,0,0,0.9);
+    z-index:9999;touch-action:none;transition:opacity 0.3s ease, transform 0.3s ease;
+  }
+  #panel.hidden{opacity:0;pointer-events:none;transform:scale(0.6) translateY(10px)}
+
+  /* Draggable Header */
+  .panel-header{
+    display:flex;justify-content:space-between;align-items:center;
+    padding-bottom:3px;margin-bottom:4px;border-bottom:1px solid rgba(212,175,55,0.3);
+    cursor:grab;
+  }
+  .panel-header:active{cursor:grabbing}
+  .panel-title{font-size:9px;font-weight:900;color:#d4af37}
+  .hide-btn{background:none;border:none;color:#ff4b2b;font-size:10px;font-weight:900;cursor:pointer}
+
+  /* Password Lock Screen */
+  #signalLock{
+    position:absolute;inset:0;background:rgba(18,18,18,0.98);z-index:100;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;border-radius:12px;
+  }
+  .lock-title{font-size:8px;color:#d4af37;font-weight:900;margin-bottom:6px;text-align:center}
+  .lock-input{
+    width:100%;height:22px;background:#121212;border:1px solid #d4af37;border-radius:4px;
+    color:#d4af37;font-size:8px;text-align:center;outline:none;margin-bottom:6px;font-weight:900;
+  }
+  .lock-btn{
+    width:100%;height:20px;background:linear-gradient(135deg,#d4af37,#aa8c2c);border:none;
+    border-radius:4px;color:#121212;font-size:8px;font-weight:900;cursor:pointer;
+  }
+
+  /* Market Mode Switcher (1 Min & 30 Sec) */
+  .market-switch{display:flex;gap:3px;margin-bottom:4px}
+  .market-btn{
+    flex:1;height:20px;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);
+    border-radius:4px;color:#888;font-size:7px;font-weight:900;cursor:pointer;transition:0.2s;
+  }
+  .market-btn.active{background:linear-gradient(135deg,#d4af37,#aa8c2c);color:#121212}
+
+  /* Timer & Input Box */
+  .core-screen{background:#121212;border:1px solid rgba(212,175,55,0.3);border-radius:6px;padding:4px;margin-bottom:4px}
+  .core-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}
+  .core-label{font-size:6px;color:#d4af37;font-weight:800}
+  .core-timer{font-size:11px;color:#fff;font-weight:900}
+  .period-input{
+    width:65px;height:16px;background:#1a1a1a;border:1px solid #d4af37;
+    border-radius:3px;color:#d4af37;font-size:8px;font-weight:900;text-align:center;outline:none;
+  }
+
+  /* Signal Stack */
+  .signal-stack{display:flex;flex-direction:column;gap:3px}
+  .quantum-badge{
+    height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;
+    font-size:8px;font-weight:900;color:#fff;border:1px solid rgba(255,255,255,0.2);
+  }
+  .bg-big{background:linear-gradient(135deg,#ff416c,#ff4b2b)}
+  .bg-small{background:linear-gradient(135deg,#17ead9,#6078ea);color:#000}
+  .c-red{background:linear-gradient(135deg,#eb3349,#f45c43)}
+  .c-green{background:linear-gradient(135deg,#11998e,#38ef7d);color:#000}
+</style>
+</head>
+<body>
+
+  <!-- Game Background -->
+  <iframe src="https://dkwin15.com/#/register?invitationCode=72484143274"></iframe>
+
+  <!-- Floating Toggle Button -->
+  <div id="floatingToggle" onclick="togglePanel()">
+    <span id="toggleText">DX</span>
+  </div>
+
+  <!-- Draggable Panel -->
+  <div id="panel">
+    <!-- Password Lock Screen -->
+    <div id="signalLock">
+      <div class="lock-title">ENTER PASSWORD</div>
+      <input type="password" id="passInput" class="lock-input" placeholder="Password">
+      <button class="lock-btn" onclick="checkPassword()">UNLOCK</button>
+    </div>
+
+    <div class="panel-header" id="panelHeader">
+      <div class="panel-title">DX PANEL</div>
+      <button class="hide-btn" onclick="togglePanel()">✕</button>
+    </div>
+
+    <!-- Market Switch Button -->
+    <div class="market-switch">
+      <button class="market-btn active" id="btn1Min" onclick="switchMarket('1min')">1 MIN</button>
+      <button class="market-btn" id="btn30Sec" onclick="switchMarket('30sec')">30 SEC</button>
+    </div>
+
+    <div class="core-screen">
+      <div class="core-row">
+        <span class="core-label">PERIOD</span>
+        <input type="text" id="periodInput" class="period-input" placeholder="Period" maxlength="5">
+      </div>
+      <div class="core-row" style="margin-top:2px">
+        <span class="core-label">TIME</span>
+        <span class="core-timer" id="timer">00:60</span>
+      </div>
+    </div>
+
+    <div class="signal-stack">
+      <div class="quantum-badge" id="resNum">NUM: -</div>
+      <div class="quantum-badge" id="colorSignal">COLOR: -</div>
+      <div class="quantum-badge" id="bigSmall">SIZE: -</div>
+    </div>
+  </div>
+
+  <script>
+    function checkPassword() {
+      let pass = document.getElementById('passInput').value.trim();
+      if(pass === "1234@") {
+        document.getElementById('signalLock').style.display = 'none';
+      } else {
+        alert("Wrong Password!");
+      }
+    }
+
+    let currentMarket = '1min';
+    function switchMarket(market) {
+      currentMarket = market;
+      document.getElementById('btn1Min').classList.toggle('active', market === '1min');
+      document.getElementById('btn30Sec').classList.toggle('active', market === '30sec');
+    }
+
+    function togglePanel() {
+      const panel = document.getElementById('panel');
+      panel.classList.toggle('hidden');
+      document.getElementById('toggleText').innerText = panel.classList.contains('hidden') ? "OPEN" : "DX";
+    }
+
+    // Panel Dragging
+    const panelElem = document.getElementById('panel');
+    const panelHeader = document.getElementById('panelHeader');
+    let isDragging = false, startX, startY;
+
+    panelHeader.addEventListener('pointerdown', (e) => {
+      isDragging = true;
+      startX = e.clientX - panelElem.offsetLeft;
+      startY = e.clientY - panelElem.offsetTop;
+      panelHeader.setPointerCapture(e.pointerId);
+    });
+
+    panelHeader.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      panelElem.style.left = (e.clientX - startX) + 'px';
+      panelElem.style.top = (e.clientY - startY) + 'px';
+      panelElem.style.right = 'auto';
+      panelElem.style.bottom = 'auto';
+    });
+
+    panelHeader.addEventListener('pointerup', (e) => {
+      isDragging = false;
+      panelHeader.releasePointerCapture(e.pointerId);
+    });
+
+    // Preset Database
+    const gameDatabase = {
+      "10405": { num: "1", color: "GREEN", size: "SMALL" },
+      "10407": { num: "7", color: "GREEN", size: "BIG" },
+      "10606": { num: "7", color: "GREEN", size: "BIG" },
+      "10604": { num: "4", color: "RED", size: "SMALL" },
+      "10487": { num: "9", color: "GREEN", size: "BIG" }
+    };
+
+    const periodInput = document.getElementById('periodInput');
+    periodInput.addEventListener('input', function() {
+      let val = this.value.trim();
+      let lastDigits = val.slice(-5);
+      
+      let resNum = document.getElementById('resNum');
+      let colorSignal = document.getElementById('colorSignal');
+      let bigSmall = document.getElementById('bigSmall');
+
+      let matched = gameDatabase[lastDigits] || gameDatabase[val];
+
+      if(matched) {
+        resNum.innerText = "NUM: " + matched.num;
+        resNum.className = "quantum-badge " + (matched.num % 2 === 0 ? "c-red" : "c-green");
+        
+        colorSignal.innerText = "COLOR: " + matched.color;
+        colorSignal.className = "quantum-badge " + (matched.color === "RED" ? "c-red" : "c-green");
+
+        bigSmall.innerText = "SIZE: " + matched.size;
+        bigSmall.className = "quantum-badge " + (matched.size === "BIG" ? "bg-big" : "bg-small");
+      } else {
+        resNum.innerText = "NUM: -";
+        resNum.className = "quantum-badge";
+        colorSignal.innerText = "COLOR: -";
+        colorSignal.className = "quantum-badge";
+        bigSmall.innerText = "SIZE: -";
+        bigSmall.className = "quantum-badge";
+      }
+    });
+
+    // Timer Sync
+    function updateTimer() {
+      let now = new Date();
+      let sec = now.getSeconds();
+      let limit = currentMarket === '1min' ? 60 : 30;
+      let rem = limit - (sec % limit);
+      document.getElementById('timer').innerText = "00:" + String(rem).padStart(2, '0');
+    }
+    setInterval(updateTimer, 1000);
+    updateTimer();
+  </script>
+</body>
+         </html>
